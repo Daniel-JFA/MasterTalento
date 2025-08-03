@@ -1,0 +1,26 @@
+.raleway {
+    font-family: "Raleway", serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+  }
+
+  .raleway-bold {
+    font-family: "Raleway", serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+  }
+  #h5{
+    color: darkgreen;
+  }
+
+  #strong{
+    font-weight: 600;
+  }
+
+  #h2{
+    text-align: center;
+    justify-content: center;
+
+  }
