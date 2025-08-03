@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadisiticas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Serif:400,700,700i|Open+Sans:400,700&display=swap" rel="stylesheet"> 
+	<link rel="stylesheet" href="css/estilos.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Serif:400,700,700i|Open+Sans:400,700&display=swap" rel="stylesheet"> 
+	<link rel="stylesheet" href="css/estilos.css">
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          margin: 20px;
+        }
+        canvas {
+          height: 400px;
+          max-width: 400px;
+          margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenido-header">
+		<div class="fondo" id="fondo">
+			<h1 class="texto">Estadisticas</h1>
+		</div>
+	</div>
+
+	<nav class="menu">
+		<a href="index.html">Nosotros</a>
+		<a href="hombres.html">Hombres</a>
+		<a href="mujeres.html">Mujeres</a>
+        <a href="estadistica.html">Estadisticas</a>
+	</nav>
+    <div class="container">
+		<div class="row acerca-de justify-content-around">
+			<article class="col-10 col-sm-5">
+				<figure class="text-center">
+					<img src="img/icons/barberos.jpg" alt="">
+					<figcaption>
+						<p>
+							<strong class="mb-2">Un equipo de expertos</strong>
+							<div class="w-100"></div>
+							Barberos más escogidos.
+						</p>
+					</figcaption>
+				</figure>
+                <h1>Hombres</h1>
+    <button onclick="mostrarGrafica()" class="btn btn-primary">Mostrar Gráfica</button>
+    <canvas id="miGraficaInterna"></canvas>
+
+    <script>
+        // Datos de ejemplo para la gráfica interna
+        const etiquetasInterna = ["Mauro", "Juan Alejandro Alejo", "Yovanny Yova", "Julian Juli", "Diego", "Juan Jose Juancho","Mateo","Sebastian"];
+        const datosInternos = [80, 60, 70, 100, 40, 70, 80, 70];
+    
+        // Función para mostrar la gráfica interna
+        function mostrarGrafica() {
+            const ctx = document.getElementById('miGraficaInterna').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', // Tipo de gráfica (bar, line, pie, etc.)
+                data: {
+                    labels: etiquetasInterna, // Etiquetas en el eje X
+                    datasets: [{
+                        label: 'Ventas (en millones) - Interno',
+                        data: datosInternos, // Datos para el eje Y
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                            
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true // Asegura que el eje Y comience desde cero
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    
+			</article>
+
+			<article class="col-10 col-sm-5">
+				<figure class="text-center">
+					<img src="img/icons/estilistas.jpg" alt="">
+					<figcaption>
+						<p>
+							<strong class="mb-2">Una historia de servicio</strong>
+							<div class="w-100"></div>
+							Estilistas más escogidas
+						</p>
+					</figcaption>
+				</figure>
+                <h1>Mujeres</h1> 
+<div>
+    <input type="file" id="archivoCSV" accept=".csv" class="btn btn-primary">
+    <button onclick="cargarDatos()" class="btn btn-primary">Generar Gráfica desde CSV</button>
+</div>
+
+<canvas id="miGraficaCSV"></canvas>
+
+<script>
+    function cargarDatos() {
+        const archivoInput = document.getElementById('archivoCSV');
+        const archivo = archivoInput.files[0];
+
+        if (!archivo) {
+            alert('Por favor, selecciona un archivo CSV.');
+            return;
+        }
+
+        const lector = new FileReader();
+
+        lector.onload = function (evento) {
+            const contenido = evento.target.result;
+            const { etiquetas, datos } = procesarCSV(contenido);
+            mostrarGraficaCSV(etiquetas, datos);
+        };
+
+        lector.readAsText(archivo);
+    }
+
+    // Procesar el contenido del archivo CSV
+    function procesarCSV(contenido) {
+        const lineas = contenido.split('\n').map(linea => linea.trim());
+        const etiquetas = [];
+        const datos = [];
+
+        lineas.forEach((linea, index) => {
+            if (linea) {
+                const [etiqueta, valor] = linea.split(',');
+                if (index === 0 && isNaN(Number(valor))) {
+                    // Omite encabezados si existen
+                    return;
+                }
+                etiquetas.push(etiqueta);
+                // Mantener los valores tal como están, ya que son ventas en millones
+                datos.push(Number(valor)); // Los valores se mantienen tal cual (en millones)
+            }
+        });
+
+        return { etiquetas, datos };
+    }
+
+    // Generar la gráfica con Chart.js
+    function mostrarGraficaCSV(etiquetas, datos) {
+        const ctx = document.getElementById('miGraficaCSV').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie', // Tipo de gráfica
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    label: 'Ventas (en millones)',
+                    data: datos,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // Formatear el valor del tooltip en millones
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + 'M'; // 2 decimales y "M" para millones
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+			</article>
+		</div>
+	</div>
+    
+    
+
+
+   
+    <script src="js/main.js"></script>
+</body>
+</html>

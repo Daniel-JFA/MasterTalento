@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gráfica con datos CSV</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Incluye Chart.js -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    canvas {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gráfica desde CSV</h1>
+  <input type="file" id="archivoCSV" accept=".csv">
+  <button onclick="cargarDatos()">Generar Gráfica</button>
+  <canvas id="miGrafica"></canvas>
+
+  <script>
+    function cargarDatos() {
+      const archivoInput = document.getElementById('archivoCSV');
+      const archivo = archivoInput.files[0];
+
+      if (!archivo) {
+        alert('Por favor, selecciona un archivo CSV.');
+        return;
+      }
+
+      const lector = new FileReader();
+
+      lector.onload = function (evento) {
+        const contenido = evento.target.result;
+        const { etiquetas, datos } = procesarCSV(contenido);
+        mostrarGrafica(etiquetas, datos);
+      };
+
+      lector.readAsText(archivo);
+    }
+
+    // Procesar el contenido del archivo CSV
+    function procesarCSV(contenido) {
+      const lineas = contenido.split('\n').map(linea => linea.trim());
+      const etiquetas = [];
+      const datos = [];
+
+      lineas.forEach((linea, index) => {
+        if (linea) {
+          const [etiqueta, valor] = linea.split(',');
+          if (index === 0 && isNaN(Number(valor))) {
+            // Omite encabezados si existen
+            return;
+          }
+          etiquetas.push(etiqueta);
+          datos.push(Number(valor));
+        }
+      });
+
+      return { etiquetas, datos };
+    }
+
+    // Generar la gráfica con Chart.js
+    function mostrarGrafica(etiquetas, datos) {
+      const ctx = document.getElementById('miGrafica').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar', // Tipo de gráfica
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            label: 'Datos desde CSV',
+            data: datos,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
